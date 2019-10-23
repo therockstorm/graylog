@@ -1,0 +1,47 @@
+{
+  "name": "@therockstorm/graylog",
+  "description": "Send Graylog GELF log messages.",
+  "version": "0.0.1",
+  "license": "MIT",
+  "homepage": "https://github.com/therockstorm/graylog#readme",
+  "bugs": {
+    "url": "https://github.com/therockstorm/graylog/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/therockstorm/graylog.git"
+  },
+  "scripts": {
+    "build": "pika build",
+    "format": "skripts format",
+    "lint": "skripts lint",
+    "publish": "pika publish",
+    "test": "skripts test --passWithNoTests",
+    "version": "npm run build"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@pika/pack": "^0.5.0",
+    "@pika/plugin-build-node": "^0.6.1",
+    "@pika/plugin-ts-standard-pkg": "^0.6.1",
+    "eslint": "^6.5.1",
+    "husky": "^3.0.8",
+    "skripts": "0.2.2",
+    "typescript": "^3.6.4"
+  },
+  "@pika/pack": {
+    "pipeline": [
+      [
+        "@pika/plugin-ts-standard-pkg"
+      ],
+      [
+        "@pika/plugin-build-node"
+      ]
+    ]
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "skripts pre-commit"
+    }
+  }
+}

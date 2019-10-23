@@ -1,0 +1,8 @@
+.DS_Store
+
+.idea/
+.serverless/
+.vscode/
+.webpack/
+node_modules/
+coverage/

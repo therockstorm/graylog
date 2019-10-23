@@ -1,0 +1,15 @@
+language: node_js
+cache:
+  directories:
+    - ~/.npm
+notifications:
+  email: false
+node_js:
+  - "13"
+  - "12"
+  - "10"
+before_install:
+  - "[[ $(node -v) =~ ^v9.*$ ]] || npm install -g npm@latest"
+branches:
+  except:
+    - /^v\d+\.\d+\.\d+$/

@@ -1,32 +1,10 @@
-import { gzip, InputType } from "zlib"
+import { gzip } from "zlib"
 import { hostname } from "os"
-import { createSocket, Socket } from "dgram"
+import { createSocket } from "dgram"
 import { randomBytes } from "crypto"
 import { promisify } from "util"
 
-const gzipProm: (buf: InputType) => Promise<Buffer> = promisify(gzip)
-
-const gelfId = [0x1e, 0x0f]
-const reservedKeys = new Set<string>()
-reservedKeys.add("version")
-reservedKeys.add("host")
-reservedKeys.add("short_message")
-reservedKeys.add("full_message")
-reservedKeys.add("timestamp")
-reservedKeys.add("level")
-reservedKeys.add("facility")
-reservedKeys.add("line")
-reservedKeys.add("file")
-
-type Func = (...args: unknown[]) => unknown
-type Defaults = { [key: string]: string | number | object | undefined | Func }
-
-interface Options {
-  host: string
-  port: number
-  defaults?: Defaults
-}
-
+type Custom = { [key: string]: string | number | object | undefined }
 type GelfMessage = {
   host?: string
   full_message?: string
@@ -37,13 +15,22 @@ type GelfMessage = {
   file?: string
   short_message?: string
   version?: string
-} & Defaults
+} & Custom
+
+interface Options {
+  host: string
+  port: number
+  defaults?: Custom
+}
 
 export class Graylog {
   private host: string
   private port: number
-  private defaults?: Defaults
-  private client: Socket
+  private defaults?: Custom
+
+  private chunkSize = 8100
+  private client = createSocket("udp4")
+  private gelfKeys = new Set<string>()
 
   public static EMERGENCY = 0
   public static ALERT = 1
@@ -55,31 +42,37 @@ export class Graylog {
   public static DEBUG = 7
 
   constructor(
-    { host, port, defaults }: Options = {
-      host: "localhost",
-      port: 12201
-    }
+    { host, port, defaults }: Options = { host: "localhost", port: 12201 }
   ) {
     this.host = host
     this.port = port
     this.defaults = defaults
-
-    this.client = createSocket("udp4")
     this.client.on("error", err => {
-      console.error("Graylog socket error", err)
+      console.error("@therockstorm/graylog socket error", err)
       this.close()
     })
+    ;[
+      "version",
+      "host",
+      "short_message",
+      "full_message",
+      "timestamp",
+      "level",
+      "facility",
+      "line",
+      "file"
+    ].forEach(k => this.gelfKeys.add(k))
   }
 
   public send = async (msg: GelfMessage): Promise<void> => {
     await Promise.all(
-      (await this.zipAndChunk(this.build(msg))).map(this.sendBuffer)
+      (await this.zipAndChunk(this.build(msg))).map(this.sendChunk)
     )
   }
 
   public close = (): void => this.client.close()
 
-  private sendBuffer = async (b: Buffer): Promise<void> =>
+  private sendChunk = async (b: Buffer): Promise<void> =>
     new Promise((res, rej) =>
       this.client.send(b, 0, b.length, this.port, this.host, err =>
         err ? rej(err) : res()
@@ -95,34 +88,28 @@ export class Graylog {
       ...this.defaults
     }
     Object.keys(msg).forEach(
-      k => (m[reservedKeys.has(k) && k !== "_id" ? k : `_${k}`] = msg[k])
+      k => (m[this.gelfKeys.has(k) && k !== "_id" ? k : `_${k}`] = msg[k])
     )
 
     return m
   }
 
   private zipAndChunk = async (msg: GelfMessage): Promise<Buffer[]> => {
-    const chunkSize = 10
-    const data = await gzipProm(Buffer.from(JSON.stringify(msg)))
-    console.log("GRAYLOG", data.length, chunkSize)
-    if (data.length <= chunkSize) return [data]
+    const buf = Buffer.from(JSON.stringify(msg))
+    const data = (await promisify(gzip)(buf)) as Buffer
+    if (data.length <= this.chunkSize) return [data]
 
-    const num = Math.ceil(data.length / chunkSize)
-    console.log("GRAYLOG", num)
-    const chunks = new Array(num)
-    const id = [].slice.call(randomBytes(8))
-    for (let i = 0; i < num; i++) {
-      const dataStart = i * chunkSize
-      chunks[i] = Buffer.from(
-        gelfId.concat(
-          id,
-          i,
-          num,
-          [].slice.call(data, dataStart, dataStart + chunkSize)
+    const total = Math.ceil(data.length / this.chunkSize)
+    const msgId = [0x1e, 0x0f].concat(...randomBytes(8))
+    return [...Array(total).keys()].map(k => {
+      const dataStart = k * this.chunkSize
+      return Buffer.from(
+        msgId.concat(
+          k,
+          total,
+          ...data.slice(dataStart, dataStart + this.chunkSize)
         )
       )
-    }
-
-    return chunks
+    })
   }
 }

@@ -4,36 +4,36 @@
 [![Build Status](https://travis-ci.org/therockstorm/graylog.svg)](https://travis-ci.org/therockstorm/graylog)
 [![license](https://img.shields.io/github/license/therockstorm/graylog.svg)]()
 
-Send Graylog GELF log messages.
+Tiny typed library to send compressed, chunked log messages to Graylog via GELF.
 
 ## Installing
 
 ```shell
-npm install @therockstorm/utils --save
+npm install @therockstorm/graylog --save
 ```
 
 ## Usage
 
 ```javascript
-import { Graylog } from "@therockstorm/Graylog"
+import { Graylog } from "@therockstorm/graylog"
 
-var log = new Graylog()
-
-log.send("Hello, World.")
+const log = new Graylog()
+log.send({ short_message: "Hello, World." })
 log.send({
   short_message: "Hello, World.",
   facility: "MyApp",
   level: Graylog.INFO
 })
 
-var complexLog = Graylog({
+const configuredLog = new Graylog({
   host: "localhost",
   port: 12201,
-  facility: "MyApp",
-  level: Graylog.INFO
+  defaults: {
+    facility: "MyApp",
+    level: Graylog.INFO
+  }
 })
-
-complexLog.send("Hello, World.")
+configuredLog.send({ short_message: "Hello, World." })
 ```
 
 ## License

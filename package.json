@@ -1,8 +1,12 @@
 {
   "name": "@therockstorm/graylog",
-  "description": "Send Graylog GELF log messages.",
+  "description": "Tiny typed library to send compressed, chunked log messages to Graylog via GELF.",
   "version": "0.0.1",
   "license": "MIT",
+  "author": {
+    "name": "Rocky Warren",
+    "url": "https://www.rocky.dev"
+  },
   "homepage": "https://github.com/therockstorm/graylog#readme",
   "bugs": {
     "url": "https://github.com/therockstorm/graylog/issues"
@@ -11,21 +15,33 @@
     "type": "git",
     "url": "https://github.com/therockstorm/graylog.git"
   },
+  "keywords": [
+    "gelf",
+    "graylog",
+    "graylog2",
+    "log",
+    "logger",
+    "logging",
+    "tools",
+    "typescript",
+    "udp"
+  ],
   "scripts": {
     "build": "pika build",
+    "clean": "rm src/*.js src/*.map; rm -rf pkg",
     "format": "skripts format",
     "lint": "skripts lint",
     "publish": "pika publish",
+    "start": "tsc && node src/functional.js",
     "test": "skripts test --passWithNoTests",
     "version": "npm run build"
   },
-  "dependencies": {},
   "devDependencies": {
     "@pika/pack": "^0.5.0",
-    "@pika/plugin-build-node": "^0.6.1",
-    "@pika/plugin-ts-standard-pkg": "^0.6.1",
+    "@pika/plugin-build-node": "^0.7.0",
+    "@pika/plugin-ts-standard-pkg": "^0.7.0",
     "eslint": "^6.5.1",
-    "husky": "^3.0.8",
+    "husky": "^3.0.9",
     "skripts": "0.2.2",
     "typescript": "^3.6.4"
   },

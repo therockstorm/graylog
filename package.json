@@ -16,6 +16,7 @@
     "url": "https://github.com/therockstorm/graylog.git"
   },
   "keywords": [
+    "aws-lambda",
     "gelf",
     "graylog",
     "graylog2",
@@ -26,13 +27,16 @@
     "typescript",
     "udp"
   ],
+  "files": [
+    "dist-*/"
+  ],
   "scripts": {
     "build": "pika build",
-    "clean": "rm src/*.js src/*.map; rm -rf pkg",
+    "clean": "rm src/*.js src/*.map functional.js functional.map; rm -rf pkg; mkdir -p pkg",
     "format": "skripts format",
     "lint": "skripts lint",
     "publish": "pika publish",
-    "start": "tsc && node src/functional.js",
+    "start": "tsc && node functional.js",
     "test": "skripts test --passWithNoTests",
     "version": "npm run build"
   },

@@ -1,5 +1,5 @@
 .DS_Store
-src/functional.ts
+functional.ts
 src/*.js
 src/*.map
 
@@ -8,4 +8,5 @@ src/*.map
 .vscode/
 .webpack/
 node_modules/
+pkg/
 coverage/

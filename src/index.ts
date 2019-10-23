@@ -7,14 +7,14 @@ import { EventEmitter } from "events"
 
 // See https://docs.graylog.org/en/3.1/pages/gelf.html#gelf-payload-specification
 export enum LogLevel {
-  Emergency = 0,
-  Alert = 1,
-  Critical = 2,
-  Error = 3,
-  Warning = 4,
-  Notice = 5,
-  Info = 6,
-  Debug = 7
+  EMERGENCY = 0,
+  ALERT = 1,
+  CRITICAL = 2,
+  ERROR = 3,
+  WARNING = 4,
+  NOTICE = 5,
+  INFO = 6,
+  DEBUG = 7
 }
 export type GelfMessage = {
   host?: string
@@ -64,45 +64,50 @@ export class Graylog extends EventEmitter {
     })
   }
 
+  public addDefaults = (defaults: CustomMap): CustomMap => {
+    this.defaults = { ...this.defaults, ...this.format(defaults) }
+    return this.defaults
+  }
+
   public debug = async (
     short: string,
     additional?: CustomMap | Error
-  ): Promise<void> => this.log(short, LogLevel.Debug, additional)
+  ): Promise<void> => this.log(short, LogLevel.DEBUG, additional)
 
   public info = async (
     short: string,
     additional?: CustomMap | Error
-  ): Promise<void> => this.log(short, LogLevel.Info, additional)
+  ): Promise<void> => this.log(short, LogLevel.INFO, additional)
 
   public notice = async (
     short: string,
     additional?: CustomMap | Error
-  ): Promise<void> => this.log(short, LogLevel.Notice, additional)
+  ): Promise<void> => this.log(short, LogLevel.NOTICE, additional)
 
   public warning = async (
     short: string,
     additional?: CustomMap | Error
-  ): Promise<void> => this.log(short, LogLevel.Warning, additional)
+  ): Promise<void> => this.log(short, LogLevel.WARNING, additional)
 
   public error = async (
     short: string,
     additional?: CustomMap | Error
-  ): Promise<void> => this.log(short, LogLevel.Error, additional)
+  ): Promise<void> => this.log(short, LogLevel.ERROR, additional)
 
   public critical = async (
     short: string,
     additional?: CustomMap | Error
-  ): Promise<void> => this.log(short, LogLevel.Critical, additional)
+  ): Promise<void> => this.log(short, LogLevel.CRITICAL, additional)
 
   public alert = async (
     short: string,
     additional?: CustomMap | Error
-  ): Promise<void> => this.log(short, LogLevel.Alert, additional)
+  ): Promise<void> => this.log(short, LogLevel.ALERT, additional)
 
   public emergency = async (
     short: string,
     additional?: CustomMap | Error
-  ): Promise<void> => this.log(short, LogLevel.Emergency, additional)
+  ): Promise<void> => this.log(short, LogLevel.EMERGENCY, additional)
 
   public close = async (): Promise<void> => {
     const done = (): void => {
@@ -159,7 +164,7 @@ export class Graylog extends EventEmitter {
 
   private build = (msg: GelfMessage): GelfMessage => ({
     host: hostname(),
-    level: LogLevel.Alert,
+    levelName: LogLevel[msg.level || LogLevel.ALERT],
     short_message: this.stringify(msg),
     timestamp: new Date().getTime() / 1000,
     version: "1.1",

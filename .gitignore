@@ -1,5 +1,5 @@
 .DS_Store
-functional.ts
+functional.*
 src/*.js
 src/*.map
 

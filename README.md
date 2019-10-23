@@ -25,7 +25,7 @@ const log = new Graylog({
   port: 12201, // default
   defaults: {
     host: name, // defaults to os.hostname()
-    level: LogLevel.Alert, // default
+    level: LogLevel.ALERT, // default
     myCustomField: { hello: { there: "world" } }
   }
 })
@@ -35,6 +35,10 @@ log.on("error", err => console.error("@therockstorm/graylog error", err))
 
 const app = async (): Promise<void> => {
   log.info("Hello, info.")
+
+  // Include new defaults in each message
+  log.addDefaults({ requestId: "myId" })
+
   log.warning("Hello, warning.", { bugs: "bunny", facility: "MyApp" })
   log.error("Hello, error.", new Error("boom"))
 

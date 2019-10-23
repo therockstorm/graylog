@@ -32,7 +32,7 @@
   ],
   "scripts": {
     "build": "pika build",
-    "clean": "rm src/*.js src/*.map functional.js functional.map; rm -rf pkg; mkdir -p pkg",
+    "clean": "rm src/*.js src/*.map functional.js*; rm -rf pkg; mkdir -p pkg",
     "format": "skripts format",
     "lint": "skripts lint",
     "publish": "pika publish",

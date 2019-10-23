@@ -1,8 +1,9 @@
 # graylog
 
-[![npm](https://img.shields.io/npm/v/@therockstorm/graylog.svg)](https://www.npmjs.com/package/@therockstorm/graylog)
+[![npm](https://badgen.net/npm/v/@therockstorm/graylog)](https://www.npmjs.com/package/@therockstorm/graylog)
 [![Build Status](https://travis-ci.org/therockstorm/graylog.svg)](https://travis-ci.org/therockstorm/graylog)
-[![license](https://img.shields.io/github/license/therockstorm/graylog.svg)]()
+[![MIT License](https://badgen.net/github/license/therockstorm/graylog)](https://github.com/therockstorm/graylog/blob/master/LICENSE)
+[![Package Size](https://badgen.net/bundlephobia/minzip/@therockstorm/graylog)](https://bundlephobia.com/result?p=@therockstorm/graylog)
 
 Tiny typed library to send compressed, chunked log messages to Graylog via GELF.
 

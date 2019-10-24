@@ -16,16 +16,15 @@ npm install @therockstorm/graylog --save
 ## Usage
 
 ```javascript
-import { Graylog, LogLevel } from "@therockstorm/graylog"
+import { Graylog } from "@therockstorm/graylog"
 import { name } from "../package.json"
 
-// Configure log to include project name at Info level
+// Configure log to include defaults in each message
 const log = new Graylog({
   host: "localhost", // default
   port: 12201, // default
   defaults: {
     host: name, // defaults to os.hostname()
-    level: LogLevel.ALERT, // default
     myCustomField: { hello: { there: "world" } }
   }
 })
@@ -39,7 +38,7 @@ const app = async (): Promise<void> => {
   // Include new defaults in each message
   log.addDefaults({ requestId: "myId" })
 
-  log.warning("Hello, warning.", { bugs: "bunny", facility: "MyApp" })
+  log.warning("Hello, warning.", { facility: "MyApp" })
   log.error("Hello, error.", new Error("boom"))
 
   // Wait for messages to send and close Graylog connection

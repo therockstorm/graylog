@@ -46,7 +46,7 @@
     "@pika/plugin-ts-standard-pkg": "^0.7.0",
     "eslint": "^6.5.1",
     "husky": "^3.0.9",
-    "skripts": "0.2.2",
+    "skripts": "0.3.1",
     "typescript": "^3.6.4"
   },
   "@pika/pack": {
